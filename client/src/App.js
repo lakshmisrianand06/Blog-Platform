@@ -1,17 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./App.css";
 
 function App() {
-  const [posts, setPosts] = useState([
-    { title: "My First Blog", content: "Welcome to my blogging platform!" },
-    { title: "Learning React", content: "React makes frontend fun and easy." },
-  ]);
-
+  const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState({ title: "", content: "" });
 
-  const addPost = () => {
+  // Fetch posts from backend
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/posts").then((res) => setPosts(res.data));
+  }, []);
+
+  // Add new post
+  const addPost = async () => {
     if (newPost.title && newPost.content) {
-      setPosts([newPost, ...posts]);
+      const res = await axios.post("http://localhost:5000/api/posts", newPost);
+      setPosts([res.data, ...posts]);
       setNewPost({ title: "", content: "" });
     }
   };
